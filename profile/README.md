@@ -24,16 +24,16 @@ PenguinCloud adds additional security while reducing complexity for your team to
 * Currently building out the products to meet a large enterprise scale
 * Kicking off rebuild of certain aspects based on learnings from before
 
-# Phased deployment
-*  Phase 1 - Core Infra
-*  Phase 2 - monitoring and enterprise mangement
-*  Phase 3 - Enterprise Security Services
-*  Phase 4 - Further integration with synergistic projects
-
 # About Us
 We are a global team of engineers with Fortune 100, DoD, and big tech experience in development and security. We know what scale means, and we also know how to make our code secure enough even for the most paranoid! Backed by multiple financers with an interest in bettering the cloud and open source communities!
+
+# Guiding Principles
+* We make software which is secure, performant, and scalable
+* We will always keep what is deployed as open source features, open source
+* We will always try to keep as much freedom as we can in all of our products for individual users outside of corporations
 
 # Contributing Guidelines
 * All code must follow our style and format guidelines: 
 * All code must pass our security and build scanners / tests
 * All code must be presented to the project without strings by someone who has authority to do such
+* Be sure to check out the employer's GPLv2 notice in license for reognized contributors!
