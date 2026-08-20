@@ -30,20 +30,30 @@ So we build the whole stack in the open, designed to fit together and designed t
 
 ## The stack
 
-Each product stands on its own. Together, they stack — infrastructure at the bottom, the things your users actually touch at the top.
+Two things live in this org, and they are not the same kind of thing.
+
+Most of it is one portfolio for **secure infrastructure and secure AI** — each product useful alone, with **PenguinCloud as the overlay** that makes the whole set portable across bare metal, any cloud, or all of them at once.
 
 ```
-   Waddles · Current                 ── applications people use
-        ▲
-   WaddleAI                          ── open-model AI gateway, your hardware
-        ▲
-   PenguinCloud                      ── deploy once, run anywhere
-        ▲
-   Elder · SkausWatch                ── know what you run, then prove it's safe
-        ▲
-   Tobogganing · Squawk · Penguin    ── zero-trust access, DNS, and endpoint
-        ▲
-   Gough · Nest                      ── bare metal, clusters, and data
+   ╭─────────────────────────────────────────────────────────────────────────────╮
+   │  PenguinCloud              deploy once — any cloud, bare metal, air-gapped  │
+   ╰─────────────────────────────────────────────────────────────────────────────╯
+        overlays everything below
+   ┌─────────────────────────────────────────────────────────────────────────────┐
+   │  SECURE AI   WaddleAI      open models, on your own GPUs                    │
+   │  GOVERNANCE  Elder         infrastructure + internal ticketing              │
+   │              SkausWatch    prove it's safe                                  │
+   │  ACCESS      Tobogganing   zero-trust network access                        │
+   │              Squawk        authenticated DNS                                │
+   │              Penguin       one hardened endpoint client                     │
+   │  FOUNDATION  Gough         bare metal to Kubernetes                         │
+   │              Nest          data, storage, databases                         │
+   └─────────────────────────────────────────────────────────────────────────────┘
+
+   ╭─────────────────────────────────────────────────────────────────────────────╮
+   │  Waddles                   community and customer hub                       │
+   │                            ← Current + Elder's customer-facing CRM          │
+   ╰─────────────────────────────────────────────────────────────────────────────╯
 ```
 
 ### Common by design
@@ -90,7 +100,7 @@ One identity model across the whole stack means access review is a single conver
 | [**Elder**](https://github.com/penguintechinc/elder) | Asset, entity, and relationship tracking | [elderrms.app](https://elderrms.app) |
 | [**SkausWatch**](https://github.com/penguintechinc/skauswatch) | Cloud security, threat intel, and vulnerability management | [skauswatch.app](https://skauswatch.app) |
 
-**Elder** maps what you actually have and how it connects — resources, identities, dependencies, and organizational hierarchy — with identity sync across Okta, LDAP/AD, AWS, GCP, and Google Workspace, SBOM ingestion with vulnerability tracking, and PII/PHI/PCI metadata attached to the data stores that hold it. Audit-ready records instead of a spreadsheet nobody trusts.
+**Elder** maps what infrastructure you actually have and how it connects — resources, identities, dependencies, and organizational hierarchy — with identity sync across Okta, LDAP/AD, AWS, GCP, and Google Workspace, SBOM ingestion with vulnerability tracking, and PII/PHI/PCI metadata attached to the data stores that hold it. Audit-ready records instead of a spreadsheet nobody trusts. Elder also keeps ticketing — scoped to **internal company operations**. Customer-facing support and CRM move to Waddles; the dividing line is simply whether the person on the other end works for you.
 
 **SkausWatch** scans S3 with ClamAV and YARA, enriches findings through VirusTotal and AlienVault OTX, runs Nuclei, ZAP, and OpenVAS against your infrastructure, and monitors hosts with an EDR agent that deploys as a read-only Kubernetes DaemonSet. Optional modules add envelope-encrypted secrets management with JIT access and a full X.509/SSH certificate authority.
 
@@ -101,20 +111,31 @@ One identity model across the whole stack means access review is a single conver
 | [**PenguinCloud**](https://github.com/penguintechinc/penguincloud) | Secure multi-cloud and hybrid deployment | [penguincloud.io](https://penguincloud.io) |
 | [**WaddleAI**](https://github.com/penguintechinc/waddleai) | Self-hosted AI gateway and coding assistant | [waddleai.app](https://waddleai.app) |
 
-**PenguinCloud** is the layer that makes the rest portable — workload and storage deployment across multi-cloud and hybrid environments, including air-gapped, with self-testing and self-healing built into the images rather than bolted on afterward.
+**PenguinCloud** is the overlay that makes everything else portable — workload and storage deployment across multi-cloud and hybrid environments, including air-gapped, with self-testing and self-healing built into the images rather than bolted on afterward.
 
 **WaddleAI** puts one OpenAI-compatible endpoint in front of Ollama, llama.cpp, OpenAI, Anthropic, Gemini, Bedrock, Azure, and Cohere — with prompt-injection detection, PII/PCI filtering, per-user and per-team budget quotas, and virtual API keys. It runs open models on your own GPUs, in your own cluster, air-gapped if you need it, and treats commercial providers as replaceable fallbacks. Ships with PenguinCode, a CLI and VS Code coding assistant that keeps your source on your machine.
 
-### Applications
+---
+
+## Waddles — a different animal
+
+Everything above exists to run secure infrastructure and secure AI. Waddles doesn't, and that's deliberate.
 
 | Project | What it does | Live |
 |---|---|---|
-| [**Waddles**](https://github.com/penguintechinc/waddlebot) | Multi-platform community and chatbot framework | [waddles.app](https://waddles.app) |
-| [**Current**](https://github.com/penguintechinc/current) | Fast, secure URL shortening and link management | [currenturl.app](https://currenturl.app) |
+| [**Waddles**](https://github.com/penguintechinc/waddlebot) | Community, customer, and relationship management | [waddles.app](https://waddles.app) |
+| [**Current**](https://github.com/penguintechinc/current) | Link shortening and click analytics — consolidating into Waddles | [currenturl.app](https://currenturl.app) |
 
-**Waddles** runs communities across Twitch, Discord, Slack, YouTube, and Kick from one deployment — AI interactions, loyalty and reputation, minigames, giveaways, event calendars, and a visual workflow builder, on a multi-tenant Kubernetes architecture with RBAC and audit logging. *(The repo is still named `waddlebot` — it outgrew the name.)*
+It started as a practical objection: we didn't want to pay for a community and customer management platform, so we built one on top of our waddlebot project. It runs communities across Twitch, Discord, Slack, YouTube, and Kick from a single multi-tenant deployment — AI-powered interactions, loyalty and reputation, minigames, giveaways, event calendars, and a visual workflow builder — with the same RBAC and audit logging discipline as the rest of the portfolio.
 
-**Current** is self-hosted link management with branded short codes, QR generation, real-time click analytics, multi-tenant isolation, and scope-based RBAC. Your link data stays yours.
+It is becoming **our community and customer hub**, and it is growing by consolidation rather than sprawl:
+
+- **Current** brings branded short links, QR codes, and click analytics — campaign tracking where the campaigns already live. It remains usable standalone today.
+- **Elder's customer-facing support and CRM** bring customer records, relationships, and support conversations. Elder keeps internal ticketing for your own staff; anything aimed at a customer lives here.
+
+One place where communities, customers, and the links that reach them all live — instead of three products and an integration problem. PenguinCloud doesn't overlay it, and doesn't need to. Different job, same engineering standards.
+
+*(The repo is still named `waddlebot` — the project outgrew the name.)*
 
 ---
 
