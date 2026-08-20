@@ -46,16 +46,28 @@ Each product stands on its own. Together, they stack — infrastructure at the b
    Gough · Nest                      ── bare metal, clusters, and data
 ```
 
+### Common by design
+
+Whatever you deploy, the foundations are the same. Nearly every product here is:
+
+- **Multi-tenant from the ground up** — the tenant boundary is enforced at the query layer and checked before anything else, not bolted on as a filter someone has to remember.
+- **OIDC scope-based for every role** — permissions resolve to OIDC scopes, never role names. Roles are just pre-bundled scope sets, so a new role never means new authorization code.
+- **Short-lived JWTs by default** — one-hour tokens, refresh tokens that rotate on every use, and a reused refresh token treated as compromise that revokes the whole chain.
+
+One identity model across the whole stack means access review is a single conversation instead of eleven of them.
+
+---
+
 ### Foundation — metal, clusters, and data
 
 | Project | What it does | Live |
 |---|---|---|
 | [**Gough**](https://github.com/penguintechinc/gough) | Hypervisor and bare-metal automation | [gough.app](https://gough.app) |
-| [**Nest**](https://github.com/penguintechinc/nest) | Kubernetes-native data infrastructure | [nestdata.app](https://nestdata.app) |
+| [**Nest**](https://github.com/penguintechinc/nest) | Kubernetes-native and public cloud centralized data infrastructure  (Storage and DB as a Service| [nestdata.app](https://nestdata.app) |
 
-**Gough** discovers a physical server over PXE and hands you a running Kubernetes cluster — then keeps going into AWS, Azure, GCP, Vultr, and LXD from the same control plane. Cosign-signed deployment templates, Vault PKI, SPIRE mTLS, and an append-only audit chain mean the provenance of every node is something you can prove, not just assert.
+**Gough** discovers a physical server over PXE and hands you a running Kubernetes cluster — then keeps going into AWS, Azure, GCP, Vultr, and LXD from the same control plane. Cosign-signed deployment templates, Vault PKI, SPIRE mTLS, and an append-only audit chain mean the provenance of every node is something you can prove, not just assert. Manage locally on your hardware, or in AWS, GCP, Vultr, and/or Azure!
 
-**Nest** turns storage, databases, search, streaming, and analytics into Kubernetes custom resources. Declare a `DataResource` and get Ceph volumes, PostgreSQL with PITR, Valkey, Kafka, OpenSearch, or ClickHouse — provisioned on-cluster, pointed at a cloud provider, or adopted from what you already run, switchable per resource without re-architecting.
+**Nest** turns storage, databases, search, streaming, and analytics into Kubernetes custom resources. Declare a `DataResource` and get Ceph volumes, PostgreSQL with PITR, Valkey, Kafka, OpenSearch, or ClickHouse — provisioned on-cluster, pointed at a cloud provider, or adopted from what you already run, switchable per resource without re-architecting. Manage locally on your hardware, or in AWS, GCP, Vultr, and/or Azure!
 
 ### Access & network — zero trust, all the way to the endpoint
 
@@ -65,7 +77,7 @@ Each product stands on its own. Together, they stack — infrastructure at the b
 | [**Squawk**](https://github.com/penguintechinc/squawk) | Authenticated DNS-over-HTTPS with per-domain access control | [squawkmgr.app](https://squawkmgr.app) |
 | [**Penguin**](https://github.com/penguintechinc/penguin) | One modular client for desktop and mobile | |
 
-**Tobogganing** is ZTNA without the enterprise VPN tax — WireGuard transport, dual X.509-certificate *and* SSO authentication, domain/IP/protocol/port firewalling, traffic mirroring to your IDS, and Suricata plus STIX/TAXII threat feeds. 100% MIT, no gated core.
+**Tobogganing** is ZTNA without the enterprise VPN tax — WireGuard transport, dual X.509-certificate *and* SSO authentication, domain/IP/protocol/port firewalling, traffic mirroring to your IDS, and Suricata plus STIX/TAXII threat feeds. Self-hosted, no per-seat licensing, and no proprietary blobs in the data path.
 
 **Squawk** puts authentication and per-user, per-domain policy in front of DNS itself, so resolution stops being the one unauthenticated hop in an otherwise zero-trust network.
 
@@ -108,7 +120,7 @@ Each product stands on its own. Together, they stack — infrastructure at the b
 
 ## Penguin Libs — MIT, and yours to use
 
-Everything above is built on [**penguin-libs**](https://github.com/penguintechinc/penguin-libs): the shared auth, data-access, licensing, and UI foundations our own products depend on. It's **permissively licensed and published to public registries** — no private scopes, no internal-only registry, no account required. Use it in your own projects, with or without anything else in this org.
+Everything above is built on [**penguin-libs**](https://github.com/penguintechinc/penguin-libs): the shared auth, data-access, licensing, and UI foundations our own products depend on. It's **MIT licensed and published to public registries** — no private scopes, no internal-only registry, no account required. Use it in your own projects, with or without anything else in this org.
 
 | Language | Install from | What you get |
 |---|---|---|
@@ -119,7 +131,7 @@ Everything above is built on [**penguin-libs**](https://github.com/penguintechin
 
 Packages are **MIT**, except the HTTP/3 RPC packages, which are Apache-2.0 — both permissive, both fine for commercial use.
 
-Publishing openly to public registries isn't incidental. It's the same rule as the rest of the stack: the things we build to make our work easier should make yours easier too.
+Publishing to public registries under MIT isn't incidental. It's the same rule as the rest of the stack: the things we build to make our work easier should make yours easier too.
 
 ---
 
@@ -163,11 +175,25 @@ The reason to care: none of this is something you have to configure, buy as an a
 - We preserve as much freedom as we can for individual users outside of corporations.
 - No shortcuts on safety, stability, or feature-completeness — no partial features with TODOs standing in for error handling.
 
+## Free, Professional, Enterprise
+
+The split is consistent across the portfolio, and the core is never the thing we hold back.
+
+| Tier | Who it's for | What it adds |
+|---|---|---|
+| **Free / Community** | Individuals, non-commercial use, and small startups still finding their footing | The complete core product — not a trial, not a crippled demo |
+| **Professional** | Established organizations, typically 50–150 people | Whitelabelling and Google OAuth2 SSO |
+| **Enterprise** | Larger established companies, government, and regulated industries | SAML 2.0 / OIDC SSO, audit logging and compliance tooling, external KMS, advanced analytics, and WaddleAI |
+
+Paid tiers gate advanced organizational capabilities — the kind you only need once you have a compliance team. They never gate the product itself.
+
 ## Licensing
 
-Most products are **AGPL-3.0 with a contributor and commercial usage exception**, so companies can't use and extend them commercially, but can use them internally and get value out of contributing with companies who have contributors are give a limited GPL2.0 license. We mostly just want to make sure no-one tries to resell our software. However, we do have our  **penguin-libs** which are published to npm, pypi, etc. and are licensed as MIT.  Where paid tiers exist, they gate advanced enterprise capabilities — SSO, audit and compliance tooling, advanced analytics — never the core product.
+Most products are **AGPL-3.0 with a contributor and commercial-use exception**. In plain terms: use them, run them internally, modify them, and build on them freely — we only want to make sure nobody repackages and resells our work. Organizations that employ official contributors receive community-edition access under limited GPL-2.0 terms. The exception is **penguin-libs**, which is MIT and published to PyPI, npm, and Go module registries for anyone to use, commercially or otherwise.
 
 Organizations employing official contributors get community-edition access under GPL-2.0 terms. See each repository's `LICENSE` for specifics.
+
+Non-profits can reach out for a free self-hosted professional level license!
 
 ## Contributing
 
